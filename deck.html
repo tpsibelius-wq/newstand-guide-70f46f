@@ -1,0 +1,384 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow, noarchive">
+<title>手作業を"仕組み"に変えるまで ｜ NewStand＋ 舞台裏</title>
+<style>
+  :root {
+    --paper: #F4F6F1;
+    --paper-soft: #E7EEE6;
+    --ink: #1C2A22;
+    --ink-soft: #55685B;
+    --forest: #1C5438;
+    --forest-deep: #123A27;
+    --moss: #4C7A5B;
+    --amber: #BE6A2B;
+    --mint: #A6E6C2;
+    --line: #CAD8CB;
+    --maxw: 1040px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; scroll-snap-type: y mandatory; }
+  body {
+    background: var(--forest-deep);
+    color: var(--ink);
+    font-family: "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Yu Gothic UI", "Yu Gothic", "Meiryo", sans-serif;
+    -webkit-font-smoothing: antialiased;
+    line-height: 1.7;
+  }
+
+  .slide {
+    min-height: 100vh; width: 100%;
+    scroll-snap-align: start;
+    display: flex; flex-direction: column; justify-content: center;
+    padding: 6vh 7vw;
+    position: relative;
+    background: var(--paper);
+    border-bottom: 1px solid var(--forest-deep);
+  }
+  .inner { width: 100%; max-width: var(--maxw); margin: 0 auto; }
+
+  /* 反転（濃緑）スライド */
+  .slide.dark { background: var(--forest); color: var(--paper); }
+  .slide.deep { background: var(--forest-deep); color: var(--paper); }
+  .slide.dark .eyebrow, .slide.deep .eyebrow { color: var(--mint); border-color: rgba(255,255,255,.25); }
+  .slide.dark .sub, .slide.deep .sub { color: #CFE3D5; }
+  .slide.dark .kicker, .slide.deep .kicker { color: var(--mint); }
+
+  .eyebrow {
+    display: inline-block; font-size: clamp(12px, 1.4vw, 15px); font-weight: 700;
+    letter-spacing: .22em; color: var(--forest); border: 1px solid var(--line);
+    border-radius: 999px; padding: 4px 16px; margin-bottom: 26px;
+  }
+  .kicker {
+    font-size: clamp(13px, 1.5vw, 16px); font-weight: 800; letter-spacing: .16em;
+    color: var(--amber); margin-bottom: 14px;
+  }
+  h1 {
+    font-size: clamp(30px, 5.6vw, 62px); font-weight: 800; line-height: 1.28;
+    letter-spacing: .01em; text-wrap: balance; color: var(--ink);
+  }
+  .slide.dark h1, .slide.deep h1 { color: var(--paper); }
+  h2 {
+    font-size: clamp(26px, 4.4vw, 48px); font-weight: 800; line-height: 1.32;
+    text-wrap: balance; letter-spacing: .01em;
+  }
+  .sub {
+    font-size: clamp(15px, 2vw, 21px); color: var(--ink-soft); margin-top: 22px;
+    font-weight: 500; line-height: 1.8;
+  }
+  .lead {
+    font-size: clamp(17px, 2.4vw, 26px); line-height: 1.85; margin-top: 20px; max-width: 30em;
+  }
+  .caption {
+    margin-top: 30px; font-size: clamp(13px, 1.6vw, 17px); color: var(--ink-soft);
+    padding-left: 16px; border-left: 3px solid var(--amber);
+  }
+  .slide.dark .caption, .slide.deep .caption { color: #CFE3D5; }
+
+  .pull {
+    margin-top: 30px; font-size: clamp(18px, 2.6vw, 30px); font-weight: 800;
+    color: var(--forest); line-height: 1.5; text-wrap: balance;
+  }
+  .slide.dark .pull, .slide.deep .pull { color: var(--mint); }
+
+  /* あるある4項目 */
+  .pains { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 34px; }
+  .pain {
+    background: var(--surface, #fff); border: 1px solid var(--line); border-radius: 14px;
+    padding: 20px 22px; display: flex; gap: 14px; align-items: flex-start;
+  }
+  .pain .ic { font-size: clamp(22px, 3vw, 30px); flex-shrink: 0; }
+  .pain b { font-size: clamp(15px, 2vw, 20px); font-weight: 700; line-height: 1.55; }
+
+  /* STEP バッジ */
+  .stepbadge {
+    display: inline-flex; align-items: baseline; gap: 12px; margin-bottom: 20px;
+  }
+  .stepbadge .n {
+    font-size: clamp(40px, 7vw, 84px); font-weight: 800; color: var(--amber);
+    line-height: .9; font-variant-numeric: tabular-nums;
+  }
+  .stepbadge .t { font-size: clamp(13px, 1.6vw, 17px); font-weight: 800; letter-spacing: .2em; color: var(--moss); }
+
+  /* フロー図（接点） */
+  .flow { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 6px; margin-top: 30px; }
+  .node {
+    background: #fff; border: 1.5px solid var(--line); border-radius: 10px;
+    padding: 9px 14px; font-size: clamp(12px, 1.5vw, 16px); font-weight: 600; white-space: nowrap;
+  }
+  .node.hot { border-color: var(--amber); background: #FBEEE2; color: var(--amber); }
+  .arrow { color: var(--moss); font-weight: 800; font-size: clamp(13px, 1.6vw, 18px); }
+
+  /* 対応マップ */
+  .maprows { margin-top: 28px; display: flex; flex-direction: column; gap: 12px; }
+  .maprow { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+  .maprow .from {
+    min-width: 210px; font-size: clamp(14px, 1.9vw, 20px); font-weight: 700;
+  }
+  .maprow .to {
+    display: inline-flex; align-items: center; gap: 9px;
+    background: var(--paper-soft); border-radius: 999px; padding: 7px 18px;
+    font-size: clamp(13px, 1.7vw, 18px); font-weight: 700; color: var(--forest);
+  }
+  .maprow .conn { color: var(--amber); font-weight: 800; }
+
+  /* 5原則グリッド */
+  .principles { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; margin-top: 34px; }
+  .principle {
+    background: rgba(255,255,255,.07); border: 1px solid rgba(255,255,255,.16);
+    border-radius: 14px; padding: 20px 22px;
+  }
+  .principle .pn { font-size: clamp(20px, 2.4vw, 28px); font-weight: 800; color: var(--mint); font-variant-numeric: tabular-nums; }
+  .principle b { display: block; margin-top: 6px; font-size: clamp(16px, 2vw, 21px); font-weight: 700; line-height: 1.5; color: var(--paper); }
+
+  /* 結果フロー（縦） */
+  .result { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 30px; align-items: center; }
+  .rchip {
+    background: #fff; border: 1.5px solid var(--forest); color: var(--forest);
+    border-radius: 999px; padding: 9px 18px; font-weight: 700;
+    font-size: clamp(13px, 1.7vw, 18px);
+  }
+  .rarrow { color: var(--amber); font-weight: 800; }
+
+  /* まとめ手法 */
+  .method3 { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 30px; align-items: stretch; }
+  .mstep {
+    flex: 1; min-width: 200px; background: #fff; border: 1px solid var(--line);
+    border-top: 4px solid var(--amber); border-radius: 12px; padding: 20px;
+  }
+  .mstep .mn { font-size: 13px; font-weight: 800; letter-spacing: .16em; color: var(--moss); }
+  .mstep b { display: block; margin-top: 8px; font-size: clamp(17px, 2.2vw, 24px); font-weight: 800; line-height: 1.4; }
+  .mstep p { margin-top: 6px; font-size: clamp(12.5px, 1.5vw, 15px); color: var(--ink-soft); }
+  .recap { margin-top: 26px; font-size: clamp(13px, 1.7vw, 18px); color: var(--ink-soft); }
+  .recap b { color: var(--forest); }
+
+  /* CTA */
+  .ctabox {
+    margin-top: 34px; display: inline-block; background: var(--amber); color: #fff;
+    padding: 16px 30px; border-radius: 14px; font-size: clamp(16px, 2.2vw, 24px); font-weight: 800;
+  }
+  .secondary { margin-top: 20px; font-size: clamp(13px, 1.6vw, 17px); color: #CFE3D5; }
+
+  .title-mark { font-size: clamp(13px, 1.6vw, 17px); font-weight: 800; letter-spacing: .2em; color: var(--mint); margin-bottom: 30px; }
+  .title-foot { position: absolute; bottom: 5vh; left: 7vw; font-size: clamp(12px,1.4vw,15px); color: #CFE3D5; }
+
+  /* ナビ */
+  .counter {
+    position: fixed; right: 18px; bottom: 14px; z-index: 20;
+    font-size: 12.5px; font-weight: 700; color: var(--paper);
+    background: rgba(18,58,39,.72); border-radius: 999px; padding: 4px 12px;
+    font-variant-numeric: tabular-nums; letter-spacing: .05em;
+  }
+  .hint {
+    position: fixed; left: 18px; bottom: 14px; z-index: 20;
+    font-size: 12px; color: var(--paper); background: rgba(18,58,39,.72);
+    border-radius: 999px; padding: 4px 12px;
+  }
+  @media (max-width: 560px) { .pains { grid-template-columns: 1fr; } .maprow .from { min-width: 100%; } }
+
+  @media print {
+    @page { size: 1280px 720px; margin: 0; }
+    html { scroll-snap-type: none; }
+    body { background: #fff; }
+    .slide { min-height: 720px; height: 720px; page-break-after: always; break-after: page; border: none; }
+    .counter, .hint { display: none; }
+    * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  }
+</style>
+
+<div class="counter" id="counter">01</div>
+<div class="hint">← → で送る</div>
+
+<!-- 1 タイトル -->
+<section class="slide deep">
+  <div class="inner">
+    <div class="title-mark">NEWSTAND＋ ／ デモの舞台裏</div>
+    <h1>手作業だらけの個人事業を、<br>追加費用ゼロで“仕組み”に変えるまで</h1>
+    <p class="sub">沼津のクラウドファンディング支援事業を題材に。<br>私たちが「棚卸し」をどう進め、どんな思想で整理したか。</p>
+  </div>
+  <div class="title-foot">— 本日お見せしたデモの、その裏側の考え方をお話しします</div>
+</section>
+
+<!-- 2 あるある -->
+<section class="slide">
+  <div class="inner">
+    <span class="eyebrow">はじめに</span>
+    <h2>こんな業務、ありませんか？</h2>
+    <div class="pains">
+      <div class="pain"><span class="ic">📥</span><b>相談がLINE・DM・Messengerに散らばる</b></div>
+      <div class="pain"><span class="ic">🧠</span><b>進捗は“頭の中”と手元のメモだけ</b></div>
+      <div class="pain"><span class="ic">🔁</span><b>同じ説明を、お客さまごとに毎回くり返す</b></div>
+      <div class="pain"><span class="ic">⏳</span><b>打ち合わせが延びて、時間が足りない</b></div>
+    </div>
+    <p class="caption">どれも、多くの個人事業に共通する“手作業のかたまり”です。</p>
+  </div>
+</section>
+
+<!-- 3 転換 -->
+<section class="slide dark">
+  <div class="inner">
+    <h2>でも、いきなり<br>“システム”は作りませんでした。</h2>
+    <p class="pull">最初にやったのは、「棚卸し」。</p>
+  </div>
+</section>
+
+<!-- 4 STEP1 -->
+<section class="slide">
+  <div class="inner">
+    <div class="stepbadge"><span class="n">1</span><span class="t">棚卸し ／ INVENTORY</span></div>
+    <h2>業務の全接点を、洗い出す</h2>
+    <p class="sub">「どこで・誰が・何を手作業でやっているか」を1枚に。公式の業務フロー図をなぞり、<b>12の接点</b>を可視化しました。</p>
+    <div class="flow">
+      <span class="node hot">相談受付</span><span class="arrow">→</span>
+      <span class="node">事務局へ連絡</span><span class="arrow">→</span>
+      <span class="node hot">日程調整</span><span class="arrow">→</span>
+      <span class="node">初回打合せ</span><span class="arrow">→</span>
+      <span class="node hot">資料集め</span><span class="arrow">→</span>
+      <span class="node">ページ作成</span><span class="arrow">→</span>
+      <span class="node hot">進捗の管理</span><span class="arrow">→</span>
+      <span class="node">公開・運用</span>
+    </div>
+    <p class="caption">作る前に、まず“見えるように”する。<span style="color:var(--amber);font-weight:700;">橙色</span>＝手作業とムダが多い接点。</p>
+  </div>
+</section>
+
+<!-- 5 STEP2 -->
+<section class="slide">
+  <div class="inner">
+    <div class="stepbadge"><span class="n">2</span><span class="t">対応づけ ／ MAPPING</span></div>
+    <h2>各接点に、“いちばん簡単で無料な道具”を当てる</h2>
+    <div class="maprows">
+      <div class="maprow"><span class="from">相談の受付</span><span class="conn">→</span><span class="to">📝 Googleフォーム</span></div>
+      <div class="maprow"><span class="from">進捗の管理</span><span class="conn">→</span><span class="to">📊 スプレッドシート</span></div>
+      <div class="maprow"><span class="from">連絡・お知らせ</span><span class="conn">→</span><span class="to">💬 LINE公式アカウント</span></div>
+      <div class="maprow"><span class="from">資料集め</span><span class="conn">→</span><span class="to">📁 Googleドライブ</span></div>
+      <div class="maprow"><span class="from">よくある質問</span><span class="conn">→</span><span class="to">🤖 NotebookLM（無料AI）</span></div>
+    </div>
+    <p class="caption">新しく作るのは最小限。すでにある無料の道具を、つなぎ合わせる。</p>
+  </div>
+</section>
+
+<!-- 6 STEP3 -->
+<section class="slide">
+  <div class="inner">
+    <div class="stepbadge"><span class="n">3</span><span class="t">小さく作る ／ BUILD SMALL</span></div>
+    <h2>全部を一度に作らない</h2>
+    <p class="lead">1つの機能を作ったら、実際にLINEで動かして確かめる。良ければ次へ。<br>「動く」を、少しずつ積み上げていく。</p>
+    <p class="pull">大きな設計図より、小さな“動く実物”。</p>
+  </div>
+</section>
+
+<!-- 7 思想 overview -->
+<section class="slide deep">
+  <div class="inner">
+    <span class="eyebrow">貫いた思想</span>
+    <h2>道具より、この考え方が本体です</h2>
+    <div class="principles">
+      <div class="principle"><span class="pn">01</span><b>“今の実態”から始める</b></div>
+      <div class="principle"><span class="pn">02</span><b>なるべく無料で、続く形に</b></div>
+      <div class="principle"><span class="pn">03</span><b>使う人にコードを触らせない</b></div>
+      <div class="principle"><span class="pn">04</span><b>大きな効果は、小さく作る</b></div>
+      <div class="principle"><span class="pn">05</span><b>外科的に・確かめながら</b></div>
+    </div>
+  </div>
+</section>
+
+<!-- 8 原則2 -->
+<section class="slide">
+  <div class="inner">
+    <div class="kicker">原則 02</div>
+    <h2>なるべく無料で、続く仕組みに</h2>
+    <p class="lead">従量課金のAIやサーバーは使わない。LINEの“返信”は無料、こちらから送る“通知”だけを数える。Googleの無料枠だけで回す。</p>
+    <p class="pull">月々の維持費は、0円。だから小さいうちから始められる。</p>
+  </div>
+</section>
+
+<!-- 9 原則3 -->
+<section class="slide">
+  <div class="inner">
+    <div class="kicker">原則 03</div>
+    <h2>使う人は、コードを一切触らない</h2>
+    <p class="lead">日々まわすのは非技術者。だから操作は“ふだんのLINE”と“Googleの表”だけ。専門知識ゼロで、毎日ちゃんと回る。</p>
+    <p class="pull">主役は、技術ではなく人。</p>
+  </div>
+</section>
+
+<!-- 10 原則4 -->
+<section class="slide">
+  <div class="inner">
+    <div class="kicker">原則 04</div>
+    <h2>最大の悩みは、コードでなく“言葉”で解いた</h2>
+    <p class="lead">「打ち合わせが3回で終わらない」— これを解決したのは、システムではなく<b>3つのAIプロンプト</b>。ヒアリング→論点整理、メモ→ページ下書き。8割はこれで片づく。</p>
+    <p class="pull">何でもコードにしない。効くところを見極める。</p>
+  </div>
+</section>
+
+<!-- 11 結果 -->
+<section class="slide dark">
+  <div class="inner">
+    <span class="eyebrow">結果</span>
+    <h2>相談から公開まで、迷わせない“仕組み”に</h2>
+    <div class="result">
+      <span class="rchip">申込</span><span class="rarrow">→</span>
+      <span class="rchip">カルテ自動生成</span><span class="rarrow">→</span>
+      <span class="rchip">本人確認</span><span class="rarrow">→</span>
+      <span class="rchip">日程調整</span><span class="rarrow">→</span>
+      <span class="rchip">Meet案内</span><span class="rarrow">→</span>
+      <span class="rchip">進捗の自動返信</span><span class="rarrow">→</span>
+      <span class="rchip">締切リマインド</span>
+    </div>
+    <p class="caption">すべて自動・追加費用ゼロ。— 今日のデモが、その実物です。</p>
+  </div>
+</section>
+
+<!-- 12 手法まとめ -->
+<section class="slide">
+  <div class="inner">
+    <span class="eyebrow">この手法は、業種を問いません</span>
+    <h2>棚卸し → 対応づけ → 小さく作る</h2>
+    <div class="method3">
+      <div class="mstep"><span class="mn">STEP 1</span><b>棚卸し</b><p>全接点を洗い出し、手作業を“見える化”する</p></div>
+      <div class="mstep"><span class="mn">STEP 2</span><b>対応づけ</b><p>各接点に、いちばん簡単で無料な道具を当てる</p></div>
+      <div class="mstep"><span class="mn">STEP 3</span><b>小さく作る</b><p>1つずつ動かし、確かめながら積み上げる</p></div>
+    </div>
+    <p class="recap">＋ 貫く5原則：<b>実態から／なるべく無料／コードを触らせない／小さく作る／確かめながら</b></p>
+  </div>
+</section>
+
+<!-- 13 CTA -->
+<section class="slide deep">
+  <div class="inner">
+    <h1>あなたの業務も、<br>まず“棚卸し”から。</h1>
+    <p class="sub">見えるようにするだけで、変えられる場所が分かります。<br>クラファン支援に限らず、多くの個人事業・小さな組織に当てはまります。</p>
+    <div class="ctabox">仕組み化のご相談は ── ◯◯（連絡先）まで</div>
+    <p class="secondary">※ クラウドファンディングの挑戦をお考えの方は、宮川さん（NewStand＋）へ。</p>
+  </div>
+</section>
+
+<script>
+  (function () {
+    var slides = Array.prototype.slice.call(document.querySelectorAll('.slide'));
+    var counter = document.getElementById('counter');
+    var pad = function (n) { return (n < 10 ? '0' : '') + n; };
+    function current() {
+      var mid = window.innerHeight / 2, idx = 0;
+      slides.forEach(function (s, i) {
+        var r = s.getBoundingClientRect();
+        if (r.top <= mid && r.bottom >= mid) idx = i;
+      });
+      return idx;
+    }
+    function update() { counter.textContent = pad(current() + 1) + ' / ' + pad(slides.length); }
+    function go(dir) {
+      var i = current() + dir;
+      if (i < 0) i = 0; if (i >= slides.length) i = slides.length - 1;
+      slides[i].scrollIntoView({ behavior: 'smooth' });
+    }
+    document.addEventListener('keydown', function (e) {
+      if (['ArrowRight', 'ArrowDown', 'PageDown', ' '].indexOf(e.key) >= 0) { e.preventDefault(); go(1); }
+      else if (['ArrowLeft', 'ArrowUp', 'PageUp'].indexOf(e.key) >= 0) { e.preventDefault(); go(-1); }
+    });
+    window.addEventListener('scroll', function () { window.requestAnimationFrame(update); }, { passive: true });
+    update();
+  })();
+</script>
