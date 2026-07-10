@@ -1,0 +1,29 @@
+{
+  "schemaVersion": "1.0",
+  "format": "html",
+  "metadata": {
+    "title": "手作業を\"仕組み\"に変えるまで ｜ NewStand＋ 舞台裏",
+    "description": "沼津のクラウドファンディング支援を題材にした、伴走の記録。",
+    "author": ""
+  },
+  "canvas": {"width": 1920, "height": 1080},
+  "playlist": [
+    "01-cover.html",
+    "02-pains.html",
+    "03-pivot.html",
+    "04-fde.html",
+    "05-step1-inventory.html",
+    "06-step2-focus.html",
+    "07-step3-mapping.html",
+    "08-step3-tools.html",
+    "09-step4-build-small.html",
+    "10-principles.html",
+    "11-principle-free.html",
+    "12-principle-nocode.html",
+    "13-principle-prompt.html",
+    "14-result.html",
+    "15-screens.html",
+    "16-method-summary.html",
+    "17-cta.html"
+  ]
+}

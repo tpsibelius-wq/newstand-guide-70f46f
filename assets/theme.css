@@ -1,0 +1,162 @@
+/* ============================================================
+   NewStand+ Deck — Theme
+   Palette: 森グリーン基調 + 明るく親しみやすいトーン
+   ============================================================ */
+:root {
+  --paper:       #F6F4EC;   /* 温かみのある紙 */
+  --paper-soft:  #EFEAD9;
+  --cream:       #FBF7EC;
+  --ink:         #1E2A22;
+  --ink-soft:    #4E5F55;
+  --ink-mute:    #7A8A82;
+
+  --forest:      #1F5F42;   /* メイン森グリーン */
+  --forest-deep: #143A28;
+  --moss:        #4C7A5B;
+  --leaf:        #7FB08A;
+
+  --amber:       #D08442;   /* 温かみあるアクセント */
+  --amber-soft:  #F0C58A;
+  --coral:       #E97462;
+  --sky:         #7CB3C7;
+  --mint:        #B7E3C6;
+
+  --line:        #D9D2BF;
+  --line-soft:   #E9E2CE;
+  --shadow:      0 4px 24px rgba(20, 58, 40, 0.08);
+  --shadow-lg:   0 12px 48px rgba(20, 58, 40, 0.12);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  width: 1920px; height: 1080px;
+  font-family: "Yu Gothic UI", "Yu Gothic", "Meiryo", "Noto Sans JP", sans-serif;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  color: var(--ink);
+  overflow: hidden;
+}
+
+.slide-container {
+  position: relative;
+  width: 1920px;
+  height: 1080px;
+  overflow: hidden;
+  background: var(--paper);
+}
+
+/* ---------- テクスチャ・装飾ユーティリティ ---------- */
+.grain {
+  position: absolute; inset: 0; pointer-events: none;
+  background-image:
+    radial-gradient(rgba(31,95,66,0.05) 1px, transparent 1px);
+  background-size: 6px 6px;
+  opacity: 0.5;
+}
+
+.leaf-arc {
+  position: absolute;
+  border: 2px solid var(--leaf);
+  border-radius: 999px;
+  opacity: 0.35;
+  pointer-events: none;
+}
+
+/* ---------- 共通タイポ ---------- */
+.eyebrow {
+  display: inline-flex; align-items: center; gap: 12px;
+  font-size: 22px; font-weight: 700; letter-spacing: 0.22em;
+  color: var(--forest);
+  padding: 8px 22px;
+  border: 1.5px solid var(--forest);
+  border-radius: 999px;
+  background: rgba(255,255,255,0.55);
+}
+.eyebrow::before {
+  content: ""; width: 8px; height: 8px; border-radius: 999px;
+  background: var(--amber);
+}
+
+.kicker {
+  font-size: 22px; font-weight: 800; letter-spacing: 0.18em;
+  color: var(--amber);
+}
+
+.h1 {
+  font-size: 92px; font-weight: 800; line-height: 1.18;
+  letter-spacing: 0.005em; color: var(--ink);
+}
+.h2 {
+  font-size: 68px; font-weight: 800; line-height: 1.22;
+  letter-spacing: 0.005em; color: var(--ink);
+}
+.h3 {
+  font-size: 44px; font-weight: 800; line-height: 1.3;
+  color: var(--ink);
+}
+
+.lead {
+  font-size: 32px; font-weight: 500; line-height: 1.7;
+  color: var(--ink-soft);
+}
+.body {
+  font-size: 26px; font-weight: 500; line-height: 1.8;
+  color: var(--ink-soft);
+}
+.small { font-size: 20px; line-height: 1.6; color: var(--ink-mute); }
+
+.pull {
+  font-size: 42px; font-weight: 800; line-height: 1.42;
+  color: var(--forest);
+}
+
+/* ---------- 濃緑スライド ---------- */
+.dark-bg { background: var(--forest); color: var(--paper); }
+.deep-bg { background: var(--forest-deep); color: var(--paper); }
+.dark-bg .h1, .dark-bg .h2, .dark-bg .h3,
+.deep-bg .h1, .deep-bg .h2, .deep-bg .h3 { color: var(--paper); }
+.dark-bg .lead, .dark-bg .body,
+.deep-bg .lead, .deep-bg .body { color: #D9E6DC; }
+.dark-bg .pull, .deep-bg .pull { color: var(--mint); }
+.dark-bg .eyebrow, .deep-bg .eyebrow {
+  color: var(--mint); border-color: rgba(183,227,198,0.4);
+  background: rgba(255,255,255,0.06);
+}
+.dark-bg .kicker, .deep-bg .kicker { color: var(--amber-soft); }
+
+/* ---------- チップ・タグ ---------- */
+.chip {
+  display: inline-flex; align-items: center;
+  padding: 10px 22px;
+  border-radius: 999px;
+  background: #fff;
+  border: 1.5px solid var(--line);
+  font-size: 22px; font-weight: 700; color: var(--ink);
+}
+.chip.hot { background: var(--amber); border-color: var(--amber); color: #fff; }
+.chip.pick { background: var(--forest); border-color: var(--forest); color: #fff; }
+
+/* ---------- ページ番号・ブランド ---------- */
+.brand-mark {
+  position: absolute; left: 80px; top: 60px;
+  font-size: 20px; font-weight: 800; letter-spacing: 0.25em;
+  color: var(--forest);
+}
+.dark-bg .brand-mark, .deep-bg .brand-mark { color: var(--mint); }
+
+.page-num {
+  position: absolute; right: 80px; bottom: 60px;
+  font-size: 20px; font-weight: 700; letter-spacing: 0.2em;
+  color: var(--ink-mute);
+  font-variant-numeric: tabular-nums;
+}
+.dark-bg .page-num, .deep-bg .page-num { color: #A8C4B0; }
+
+/* ---------- カード ---------- */
+.card {
+  background: #fff;
+  border: 1.5px solid var(--line-soft);
+  border-radius: 20px;
+  box-shadow: var(--shadow);
+}
