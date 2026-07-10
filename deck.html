@@ -170,6 +170,45 @@
   .term .en { font-size: clamp(13px, 1.7vw, 19px); font-weight: 800; letter-spacing: .08em; color: var(--forest); }
   .term .ja { font-size: clamp(14px, 1.9vw, 20px); color: var(--ink-soft); margin-top: 4px; }
 
+  /* 事業ドメイン チップ */
+  .domains { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 30px; }
+  .dom {
+    background: #fff; border: 1.5px solid var(--line); border-radius: 12px;
+    padding: 12px 20px; font-size: clamp(14px, 1.9vw, 20px); font-weight: 700;
+  }
+  .dom small { display: block; font-weight: 400; font-size: clamp(11px,1.3vw,14px); color: var(--ink-soft); margin-top: 2px; }
+
+  /* 2x2 マトリクス */
+  .matrix-wrap { display: flex; gap: 16px; margin-top: 26px; align-items: stretch; }
+  /* 縦軸：矢印を使わず「上=大／下=小」で示す（回転させると文字が反転するため） */
+  .ylabel {
+    display: flex; flex-direction: column; align-items: center; justify-content: space-between;
+    padding: 4px 0; font-weight: 800; color: var(--moss);
+  }
+  .ylabel .cap { font-size: clamp(13px, 1.7vw, 18px); }
+  .ylabel .name {
+    writing-mode: vertical-rl; text-orientation: mixed;
+    font-size: clamp(11px, 1.4vw, 15px); letter-spacing: .12em;
+  }
+  .matrix-col { flex: 1; }
+  .matrix {
+    display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr;
+    gap: 10px; min-height: 44vh;
+  }
+  .quad {
+    border: 1.5px dashed var(--line); border-radius: 12px; padding: 14px 16px;
+    display: flex; flex-direction: column; justify-content: center; background: #fff;
+  }
+  .quad.pick { border: 2.5px solid var(--amber); background: #FBEEE2; }
+  .quad .qname { font-size: clamp(14px, 1.9vw, 21px); font-weight: 800; line-height: 1.4; }
+  .quad.pick .qname { color: var(--amber); }
+  .quad .qwhy { font-size: clamp(11px, 1.35vw, 15px); color: var(--ink-soft); margin-top: 5px; line-height: 1.6; }
+  .quad .star { font-size: clamp(11px,1.3vw,14px); font-weight: 800; color: var(--amber); letter-spacing: .1em; margin-bottom: 4px; }
+  .quad.empty { background: transparent; }
+  .xlabel { text-align: right; font-size: clamp(11px, 1.4vw, 15px); font-weight: 800; color: var(--moss); letter-spacing: .1em; margin-top: 8px; }
+  .excluded { margin-top: 14px; font-size: clamp(11.5px, 1.4vw, 15px); color: var(--ink-soft); }
+  .excluded b { color: var(--ink); }
+
   /* 実際の画面 */
   .screens { display: flex; gap: 30px; margin-top: 30px; flex-wrap: wrap; }
   .screen { flex: 1; min-width: 240px; }
@@ -252,12 +291,57 @@
   </div>
 </section>
 
-<!-- 4 STEP1 -->
+<!-- 4 STEP1 事業まるごと -->
 <section class="slide">
   <div class="inner">
     <div class="stepbadge"><span class="n">1</span><span class="t">棚卸し ／ INVENTORY</span></div>
-    <h2>業務の全接点を、一緒に洗い出す</h2>
-    <p class="sub">芹沢さん・宮川さんと一緒に、実際の業務を一つずつたどる。「どこで・誰が・何を手作業でやっているか」を1枚に。こうして<b>12の接点</b>が見えてきました。</p>
+    <h2>まず、事業まるごとの作業を洗い出す</h2>
+    <p class="sub">芹沢さんと一緒に現場へ入り、宮川さんが日々やっている仕事を<b>ぜんぶ</b>出してもらいました。<br>「何を自動化するか」より先に、「何をやっているか」を見る。</p>
+    <div class="domains">
+      <div class="dom">クラウドファンディング支援<small>7本が同時進行</small></div>
+      <div class="dom">沼津経済新聞・ブログ執筆<small>毎日1本／複数媒体</small></div>
+      <div class="dom">ラジオ<small></small></div>
+      <div class="dom">介護<small></small></div>
+      <div class="dom">店の運営<small></small></div>
+    </div>
+    <p class="caption">システム化ありきで聞かない。まず、全部を机の上に並べる。</p>
+  </div>
+</section>
+
+<!-- 5 STEP2 選ぶ -->
+<section class="slide">
+  <div class="inner">
+    <div class="stepbadge"><span class="n">2</span><span class="t">選ぶ ／ FOCUS</span></div>
+    <h2>全部はやらない。いちばん効く一つを選ぶ。</h2>
+    <div class="matrix-wrap">
+      <div class="ylabel"><span class="cap">大</span><span class="name">作業の負担</span><span class="cap">小</span></div>
+      <div class="matrix-col">
+        <div class="matrix">
+          <div class="quad">
+            <div class="qname">新聞・ブログ執筆</div>
+            <div class="qwhy">負担はある。でもAIで既に軽くなり、管理画面は他人に任せられない（＝改善の余地が小さい）</div>
+          </div>
+          <div class="quad pick">
+            <div class="star">★ ここから手をつける</div>
+            <div class="qname">クラウドファンディング支援</div>
+            <div class="qwhy">7本が同時に走り、いちばん混乱。手一杯で成長が止まる。しかも本人がいちばん伸ばしたい領域</div>
+          </div>
+          <div class="quad empty"></div>
+          <div class="quad empty"></div>
+        </div>
+        <div class="xlabel">改善できる余地　小 ───→ 大</div>
+      </div>
+    </div>
+    <p class="excluded">※ <b>ラジオ・介護・店の運営</b>は、今回の対象外と早い段階で合意。</p>
+  </div>
+</section>
+
+<!-- 6 STEP3 接点をたどる -->
+<section class="slide">
+  <div class="inner">
+    <div class="stepbadge"><span class="n">3</span><span class="t">対応づけ ／ MAPPING</span></div>
+    <h2>選んだ領域の、接点をたどる</h2>
+    <p class="sub">相談の受付から公開まで、実際の業務を一つずつたどる。「どこで・誰が・何を手作業でやっているか」を1枚に。こうして<b>12の接点</b>が見えてきました。</p>
     <div class="flow">
       <span class="node hot">相談受付</span><span class="arrow">→</span>
       <span class="node">事務局へ連絡</span><span class="arrow">→</span>
@@ -275,7 +359,7 @@
 <!-- 5 STEP2 -->
 <section class="slide">
   <div class="inner">
-    <div class="stepbadge"><span class="n">2</span><span class="t">対応づけ ／ MAPPING</span></div>
+    <div class="kicker">STEP 3 ／ つづき</div>
     <h2>各接点に、“いちばん簡単で無料な道具”を当てる</h2>
     <div class="maprows">
       <div class="maprow"><span class="from">相談の受付</span><span class="conn">→</span><span class="to">📝 Googleフォーム</span></div>
@@ -291,7 +375,7 @@
 <!-- 6 STEP3 -->
 <section class="slide">
   <div class="inner">
-    <div class="stepbadge"><span class="n">3</span><span class="t">小さく作る ／ BUILD SMALL</span></div>
+    <div class="stepbadge"><span class="n">4</span><span class="t">小さく作る ／ BUILD SMALL</span></div>
     <h2>全部を一度に作らない</h2>
     <p class="lead">1つの機能を作ったら、実際にLINEで動かして確かめる。良ければ次へ。<br>「動く」を、少しずつ積み上げていく。</p>
     <p class="pull">大きな設計図より、小さな“動く実物”。</p>
@@ -384,11 +468,12 @@
 <section class="slide">
   <div class="inner">
     <span class="eyebrow">この手法は、業種を問いません</span>
-    <h2>棚卸し → 対応づけ → 小さく作る</h2>
+    <h2>棚卸し → 選ぶ → 対応づけ → 小さく作る</h2>
     <div class="method3">
-      <div class="mstep"><span class="mn">STEP 1</span><b>棚卸し</b><p>全接点を洗い出し、手作業を“見える化”する</p></div>
-      <div class="mstep"><span class="mn">STEP 2</span><b>対応づけ</b><p>各接点に、いちばん簡単で無料な道具を当てる</p></div>
-      <div class="mstep"><span class="mn">STEP 3</span><b>小さく作る</b><p>1つずつ動かし、確かめながら積み上げる</p></div>
+      <div class="mstep"><span class="mn">STEP 1</span><b>棚卸し</b><p>事業まるごとの作業を、全部出してもらう</p></div>
+      <div class="mstep"><span class="mn">STEP 2</span><b>選ぶ</b><p>作業負担 × 改善余地で、手をつける一つを決める</p></div>
+      <div class="mstep"><span class="mn">STEP 3</span><b>対応づけ</b><p>接点をたどり、簡単で無料な道具を当てる</p></div>
+      <div class="mstep"><span class="mn">STEP 4</span><b>小さく作る</b><p>1つずつ動かし、確かめながら積み上げる</p></div>
     </div>
     <p class="recap">＋ 貫く5原則：<b>実態から／なるべく無料／コードを触らせない／小さく作る／確かめながら</b></p>
   </div>
