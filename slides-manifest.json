@@ -2,11 +2,14 @@
   "schemaVersion": "1.0",
   "format": "html",
   "metadata": {
-    "title": "手作業を\"仕組み\"に変えるまで ｜ NewStand＋ 舞台裏",
-    "description": "沼津のクラウドファンディング支援を題材にした、伴走の記録。",
+    "title": "AIを、自分の仕事のどこで使うか ｜ NewStand＋ 事例",
+    "description": "沼津の小さな事業を題材に、\"棚卸し\"からAIの使いどころを考えた実例。",
     "author": ""
   },
-  "canvas": {"width": 1920, "height": 1080},
+  "canvas": {
+    "width": 1920,
+    "height": 1080
+  },
   "playlist": [
     "01-cover.html",
     "02-pains.html",
@@ -21,9 +24,11 @@
     "11-principle-free.html",
     "12-principle-nocode.html",
     "13-principle-prompt.html",
-    "14-result.html",
-    "15-screens.html",
-    "16-method-summary.html",
-    "17-cta.html"
+    "14-prompt-anatomy.html",
+    "15-ai-lessons.html",
+    "16-result.html",
+    "17-screens.html",
+    "18-method-summary.html",
+    "19-takeaway.html"
   ]
 }
