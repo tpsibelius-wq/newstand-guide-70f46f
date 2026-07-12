@@ -6,50 +6,86 @@
 <meta name="robots" content="noindex, nofollow, noarchive">
 <title>AIを、自分の仕事のどこで使うか ｜ NewStand＋ 事例</title>
 <style>
-  :root { --deep: #143A28; --paper: #F6F4EC; --mint: #B7E3C6; --amber: #D08442; }
+  :root { --deep: #143A28; --paper: #F6F4EC; --mint: #B7E3C6; --s: 1; }
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  html, body { height: 100%; background: var(--deep); overflow: hidden;
-    font-family: "Yu Gothic UI", "Yu Gothic", "Meiryo", sans-serif; }
+  html, body {
+    width: 100%; height: 100%; overflow: hidden;
+    background: var(--deep);
+    font-family: "Yu Gothic UI", "Yu Gothic", "Meiryo", sans-serif;
+  }
 
-  #stage { position: fixed; inset: 0; display: grid; place-items: center; }
-  #fit { position: relative; width: 1920px; height: 1080px; transform-origin: center center;
-    box-shadow: 0 20px 70px rgba(0,0,0,.45); background: var(--paper); }
-  iframe { width: 1920px; height: 1080px; border: 0; display: block; }
+  /* ステージ：画面いっぱい */
+  #stage { position: fixed; inset: 0; overflow: hidden; }
 
-  /* ナビゲーション */
-  .nav { position: fixed; top: 0; bottom: 0; width: 14vw; max-width: 160px; z-index: 30;
-    border: 0; background: transparent; cursor: pointer; opacity: 0; transition: opacity .18s; }
+  /* スライドの箱：1920×1080固定。left/top 50% → 自身の半分だけ戻して中央化 → その後スケール。
+     中央配置をCSSが保証するので、JSが失敗しても画面外に飛ばない。 */
+  #fit {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 1920px;
+    height: 1080px;
+    transform: translate(-50%, -50%) scale(var(--s));
+    transform-origin: center center;
+    background: var(--paper);
+    box-shadow: 0 20px 70px rgba(0,0,0,.45);
+    will-change: transform;
+  }
+  #frame { width: 1920px; height: 1080px; border: 0; display: block; }
+
+  /* ナビ（左右のクリック領域） */
+  .nav {
+    position: fixed; top: 0; bottom: 0; width: 12vw; max-width: 150px; z-index: 30;
+    border: 0; background: transparent; cursor: pointer; opacity: 0; transition: opacity .18s;
+    display: flex; align-items: center; justify-content: center;
+  }
   .nav:hover, .nav:focus-visible { opacity: 1; outline: none; }
   .nav.prev { left: 0; } .nav.next { right: 0; }
-  .nav span { display: grid; place-items: center; width: 54px; height: 54px; margin: 0 auto;
-    border-radius: 999px; background: rgba(0,0,0,.45); color: #fff; font-size: 24px; line-height: 1; }
+  .nav span {
+    display: grid; place-items: center; width: 52px; height: 52px;
+    border-radius: 999px; background: rgba(0,0,0,.5); color: #fff; font-size: 24px; line-height: 1;
+  }
   .nav:disabled { cursor: default; }
   .nav:disabled span { opacity: .25; }
 
   #hud { position: fixed; right: 16px; bottom: 14px; z-index: 40; display: flex; gap: 8px; align-items: center; }
   #hud button, #counter {
-    background: rgba(0,0,0,.5); color: var(--paper); border: 0; border-radius: 999px;
-    padding: 6px 14px; font-size: 13px; font-weight: 700; letter-spacing: .08em;
+    background: rgba(0,0,0,.55); color: var(--paper); border: 0; border-radius: 999px;
+    padding: 7px 15px; font-size: 13px; font-weight: 700; letter-spacing: .08em;
     font-variant-numeric: tabular-nums; cursor: pointer;
   }
   #counter { cursor: default; }
-  #hint { position: fixed; left: 16px; bottom: 14px; z-index: 40; color: #A8C4B0; font-size: 12.5px;
-    background: rgba(0,0,0,.5); border-radius: 999px; padding: 6px 14px; transition: opacity .5s; }
+  #hint {
+    position: fixed; left: 16px; bottom: 14px; z-index: 40; color: #A8C4B0; font-size: 12.5px;
+    background: rgba(0,0,0,.55); border-radius: 999px; padding: 7px 15px; transition: opacity .6s;
+  }
 
-  /* サムネイル一覧（Gキー） */
-  #grid { position: fixed; inset: 0; z-index: 60; background: rgba(10,26,18,.97); overflow: auto;
-    padding: 28px; display: none; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 14px; align-content: start; }
+  /* 一覧（Gキー） */
+  #grid {
+    position: fixed; inset: 0; z-index: 60; background: rgba(10,26,18,.97); overflow-y: auto;
+    padding: 26px; display: none; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 14px; align-content: start;
+  }
   #grid.open { display: grid; }
-  #grid button { border: 2px solid transparent; border-radius: 8px; overflow: hidden; background: #000;
-    cursor: pointer; padding: 0; position: relative; aspect-ratio: 16/9; }
-  #grid button:hover, #grid button:focus-visible { border-color: var(--mint); outline: none; }
-  #grid iframe { width: 1920px; height: 1080px; transform: scale(.12); transform-origin: top left; pointer-events: none; }
-  #grid .no { position: absolute; left: 6px; bottom: 5px; color: #fff; background: rgba(0,0,0,.65);
-    border-radius: 4px; font-size: 11px; padding: 1px 6px; font-weight: 700; }
+  #grid .cell {
+    position: relative; aspect-ratio: 16 / 9; border: 2px solid transparent; border-radius: 8px;
+    overflow: hidden; background: #0C1A12; cursor: pointer; padding: 0;
+  }
+  #grid .cell:hover, #grid .cell:focus-visible { border-color: var(--mint); outline: none; }
+  #grid .cell iframe {
+    width: 1920px; height: 1080px; border: 0; pointer-events: none;
+    transform: scale(var(--ts, .125)); transform-origin: top left;
+  }
+  #grid .cell .no {
+    position: absolute; left: 6px; bottom: 5px; color: #fff; background: rgba(0,0,0,.7);
+    border-radius: 4px; font-size: 11px; padding: 1px 7px; font-weight: 700;
+  }
 </style>
 </head>
 <body>
-  <div id="stage"><div id="fit"><iframe id="frame" title="スライド" src="slides/01-cover.html"></iframe></div></div>
+  <div id="stage">
+    <div id="fit"><iframe id="frame" title="スライド" src="slides/01-cover.html"></iframe></div>
+  </div>
 
   <button class="nav prev" id="prev" aria-label="前のスライド"><span>‹</span></button>
   <button class="nav next" id="next" aria-label="次のスライド"><span>›</span></button>
@@ -65,7 +101,6 @@
 
 <script>
 (function () {
-  // manifest.json と同じ並び（file:// でも動くようハードコード）
   var PLAYLIST = [
     "01-cover.html",
     "02-pains.html",
@@ -87,41 +122,44 @@
     "18-method-summary.html",
     "19-takeaway.html"
   ];
-  var frame = document.getElementById('frame'),
-      fit = document.getElementById('fit'),
-      counter = document.getElementById('counter'),
-      prevBtn = document.getElementById('prev'),
-      nextBtn = document.getElementById('next'),
-      grid = document.getElementById('grid'),
-      hint = document.getElementById('hint');
+  var W = 1920, H = 1080;
+  var root = document.documentElement;
+  var frame = document.getElementById('frame');
+  var counter = document.getElementById('counter');
+  var prevBtn = document.getElementById('prev');
+  var nextBtn = document.getElementById('next');
+  var grid = document.getElementById('grid');
+  var hint = document.getElementById('hint');
   var i = 0;
 
   function pad(n) { return (n < 10 ? '0' : '') + n; }
 
-  function scale() {
-    var s = Math.min(window.innerWidth / 1920, window.innerHeight / 1080);
-    fit.style.transform = 'scale(' + s + ')';
+  // 画面に収まる倍率を --s に入れる（中央配置はCSSが担保。ここは倍率のみ）
+  function fitScale() {
+    var vw = window.innerWidth || root.clientWidth;
+    var vh = window.innerHeight || root.clientHeight;
+    var s = Math.min(vw / W, vh / H);
+    if (!isFinite(s) || s <= 0) s = 1;
+    root.style.setProperty('--s', s);
   }
 
-  function attachKeys(doc) { // iframe内にフォーカスが移ってもキーが効くように
-    try { doc.addEventListener('keydown', onKey); } catch (e) { /* file:// では不可・無視 */ }
-  }
-
-  function show(n, push) {
+  function show(n, replaceHash) {
     i = Math.max(0, Math.min(PLAYLIST.length - 1, n));
     frame.src = 'slides/' + PLAYLIST[i];
     counter.textContent = pad(i + 1) + ' / ' + pad(PLAYLIST.length);
     prevBtn.disabled = (i === 0);
     nextBtn.disabled = (i === PLAYLIST.length - 1);
-    if (push !== false) history.replaceState(null, '', '#' + (i + 1));
+    if (replaceHash !== false) {
+      try { history.replaceState(null, '', '#' + (i + 1)); } catch (e) {}
+    }
   }
 
   function onKey(e) {
+    var k = e.key;
     if (grid.classList.contains('open')) {
-      if (e.key === 'Escape' || e.key.toLowerCase() === 'g') { toggleGrid(false); e.preventDefault(); }
+      if (k === 'Escape' || (k && k.toLowerCase() === 'g')) { toggleGrid(false); e.preventDefault(); }
       return;
     }
-    var k = e.key;
     if (k === 'ArrowRight' || k === 'ArrowDown' || k === 'PageDown' || k === ' ') { show(i + 1); e.preventDefault(); }
     else if (k === 'ArrowLeft' || k === 'ArrowUp' || k === 'PageUp') { show(i - 1); e.preventDefault(); }
     else if (k === 'Home') { show(0); e.preventDefault(); }
@@ -131,37 +169,64 @@
   }
 
   function toggleFs() {
-    if (!document.fullscreenElement) { document.documentElement.requestFullscreen().catch(function(){}); }
-    else { document.exitFullscreen(); }
+    if (!document.fullscreenElement) {
+      if (root.requestFullscreen) root.requestFullscreen().catch(function () {});
+    } else if (document.exitFullscreen) {
+      document.exitFullscreen();
+    }
   }
 
   var gridBuilt = false;
   function buildGrid() {
-    if (gridBuilt) return; gridBuilt = true;
+    if (gridBuilt) return;
+    gridBuilt = true;
     PLAYLIST.forEach(function (name, idx) {
-      var b = document.createElement('button');
-      b.innerHTML = '<iframe src="slides/' + name + '" tabindex="-1" title=""></iframe><span class="no">' + pad(idx + 1) + '</span>';
-      b.addEventListener('click', function () { show(idx); toggleGrid(false); });
-      grid.appendChild(b);
+      var cell = document.createElement('button');
+      cell.className = 'cell';
+      cell.innerHTML = '<iframe src="slides/' + name + '" tabindex="-1" title=""></iframe>' +
+                       '<span class="no">' + pad(idx + 1) + '</span>';
+      cell.addEventListener('click', function () { show(idx); toggleGrid(false); });
+      grid.appendChild(cell);
     });
+    sizeThumbs();
+  }
+  // サムネの縮小率をセルの実幅から正確に決める
+  function sizeThumbs() {
+    var cells = grid.querySelectorAll('.cell');
+    for (var n = 0; n < cells.length; n++) {
+      var w = cells[n].clientWidth;
+      if (w) cells[n].style.setProperty('--ts', w / W);
+    }
   }
   function toggleGrid(open) {
-    if (open) { buildGrid(); grid.classList.add('open'); }
+    if (open) { buildGrid(); grid.classList.add('open'); sizeThumbs(); }
     else { grid.classList.remove('open'); }
   }
 
   prevBtn.addEventListener('click', function () { show(i - 1); });
   nextBtn.addEventListener('click', function () { show(i + 1); });
   document.getElementById('fsBtn').addEventListener('click', toggleFs);
-  document.getElementById('gridBtn').addEventListener('click', function () { toggleGrid(!grid.classList.contains('open')); });
+  document.getElementById('gridBtn').addEventListener('click', function () {
+    toggleGrid(!grid.classList.contains('open'));
+  });
   document.addEventListener('keydown', onKey);
-  frame.addEventListener('load', function () { attachKeys(frame.contentDocument); });
-  window.addEventListener('resize', scale);
+  // iframe内にフォーカスが移ってもキーを効かせる（同一オリジン時）
+  frame.addEventListener('load', function () {
+    try { frame.contentDocument.addEventListener('keydown', onKey); } catch (e) {}
+  });
 
-  scale();
-  var start = parseInt((location.hash || '#1').slice(1), 10);
+  window.addEventListener('resize', function () {
+    fitScale();
+    if (grid.classList.contains('open')) sizeThumbs();
+  });
+  window.addEventListener('orientationchange', fitScale);
+  document.addEventListener('fullscreenchange', fitScale);
+  window.addEventListener('load', fitScale);
+
+  fitScale();
+  var start = parseInt((location.hash || '#1').replace('#', ''), 10);
   show(isNaN(start) ? 0 : start - 1, false);
-  setTimeout(function () { hint.style.opacity = '0'; }, 4000);
+  setTimeout(function () { hint.style.opacity = '0'; }, 4500);
 })();
 </script>
 </body>
