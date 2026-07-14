@@ -220,12 +220,19 @@ document.getElementById('f').addEventListener('submit', async function (ev) {
     answers[k] = answers[k] ? answers[k] + '、' + v : v; // 複数選択は「、」でつなぐ
   }
 
+  // 申込ごとに一意なID。再送しても同じIDなので、サーバー側は二重処理しない（冪等）。
+  // ボタンを押した時点で1回だけ作り、再送でも同じIDを使う（window.appIdに保持）
+  if (!window.__appId) {
+    window.__appId = (self.crypto && crypto.randomUUID) ? crypto.randomUUID()
+      : 'app-' + Date.now() + '-' + Math.random().toString(36).slice(2);
+  }
+
   try {
     await fetch(GAS_URL + '?liff=1', {
       method: 'POST',
       mode: 'no-cors', // GASはCORSヘッダーを返せないため、送信のみ（結果はLINEのトークで届く）
       headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-      body: JSON.stringify({ idToken: idToken, answers: answers })
+      body: JSON.stringify({ applicationId: window.__appId, idToken: idToken, answers: answers })
     });
     document.getElementById('app').style.display = 'none';
     document.getElementById('done').style.display = 'block';
