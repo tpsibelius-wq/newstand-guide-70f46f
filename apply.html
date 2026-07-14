@@ -1,0 +1,243 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>クラファン無料相談 お申し込み</title>
+<script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+<style>
+  :root{ --primary:#2E7D32; --accent:#D08442; --line:#e0e0e0; --text:#222; --muted:#666; }
+  *{ box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  body{ margin:0; padding:0 0 40px; font-family:-apple-system,"Hiragino Kaku Gothic ProN","Noto Sans JP",sans-serif;
+        color:var(--text); line-height:1.7; background:#fafafa; }
+  header{ background:var(--primary); color:#fff; padding:20px 18px; }
+  header h1{ margin:0; font-size:19px; }
+  header p{ margin:6px 0 0; font-size:13px; opacity:.9; }
+  main{ padding:16px; max-width:640px; margin:0 auto; }
+  .who{ background:#E8F5E9; border:1px solid #A5D6A7; border-radius:10px; padding:12px 14px; margin-bottom:16px; font-size:14px; }
+  .who b{ color:var(--primary); }
+  .card{ background:#fff; border:1px solid var(--line); border-radius:12px; padding:16px; margin-bottom:14px; }
+  .sec{ font-size:13px; font-weight:700; color:var(--primary); margin:0 0 12px; padding-bottom:8px; border-bottom:2px solid #E8F5E9; }
+  label.q{ display:block; font-weight:700; font-size:15px; margin:16px 0 6px; }
+  label.q:first-of-type{ margin-top:0; }
+  .req{ color:#C62828; font-size:12px; margin-left:4px; }
+  .hint{ font-size:12px; color:var(--muted); margin:0 0 8px; }
+  input[type=text], textarea, select{ width:100%; padding:12px; font-size:16px; border:1px solid #ccc;
+        border-radius:8px; background:#fff; font-family:inherit; }
+  textarea{ min-height:90px; resize:vertical; }
+  .opts label{ display:block; padding:11px 12px; margin-bottom:7px; border:1px solid #ccc; border-radius:8px;
+        background:#fff; font-size:15px; cursor:pointer; }
+  .opts label:has(input:checked){ border-color:var(--primary); background:#E8F5E9; font-weight:700; }
+  .opts input{ margin-right:8px; transform:scale(1.2); }
+  .privacy{ background:#FFF8E1; border:1px solid #FFE082; border-radius:10px; padding:14px; font-size:13px; }
+  .privacy p{ margin:0 0 10px; }
+  button{ width:100%; padding:16px; font-size:17px; font-weight:700; color:#fff; background:var(--primary);
+        border:0; border-radius:10px; margin-top:8px; }
+  button:disabled{ background:#bdbdbd; }
+  .err{ color:#C62828; font-size:14px; margin-top:10px; text-align:center; }
+  .done{ text-align:center; padding:50px 20px; }
+  .done .mark{ font-size:56px; }
+  .done h2{ color:var(--primary); font-size:20px; margin:12px 0; }
+  .done p{ font-size:15px; color:#444; }
+  .loading{ text-align:center; padding:60px 20px; color:var(--muted); }
+</style>
+</head>
+<body>
+
+<div id="loading" class="loading">読み込んでいます…</div>
+
+<div id="app" style="display:none">
+  <header>
+    <h1>クラファン無料相談 お申し込み</h1>
+    <p>初回相談（オンライン45分・無料）／所要3分ほど・空欄があってもOK</p>
+  </header>
+
+  <main>
+    <div class="who">✅ <b id="uname">LINEアカウント</b> として申し込みます<br>
+      <span style="font-size:12px;color:#555">お申し込みと同時に本人確認が完了します。合言葉の入力は不要です。</span></div>
+
+    <form id="f">
+      <div class="card">
+        <p class="sec">① まず、あなたのことを教えてください</p>
+        <label class="q">お名前<span class="req">必須</span></label>
+        <input type="text" name="お名前" required>
+
+        <label class="q">事業形態</label>
+        <div class="opts" data-name="事業形態">
+          <label><input type="radio" name="事業形態" value="法人">法人</label>
+          <label><input type="radio" name="事業形態" value="個人・個人事業">個人・個人事業</label>
+          <label><input type="radio" name="事業形態" value="非営利法人（NPO・一般社団）">非営利法人（NPO・一般社団）</label>
+          <label><input type="radio" name="事業形態" value="任意団体・グループ">任意団体・グループ</label>
+          <label><input type="radio" name="事業形態" value="その他">その他</label>
+        </div>
+
+        <label class="q">法人・団体名（あれば）</label>
+        <input type="text" name="法人・団体名">
+
+        <label class="q">HP・SNS（あれば）</label>
+        <p class="hint">ホームページ・X・InstagramなどのURL。複数は改行で。</p>
+        <textarea name="HP・SNS"></textarea>
+      </div>
+
+      <div class="card">
+        <p class="sec">② プロジェクトについて</p>
+        <label class="q">ジャンル</label>
+        <div class="opts">
+          <label><input type="radio" name="ジャンル" value="まちづくり系">まちづくり系</label>
+          <label><input type="radio" name="ジャンル" value="店舗等の開業系">店舗等の開業系</label>
+          <label><input type="radio" name="ジャンル" value="イベント開催系">イベント開催系</label>
+          <label><input type="radio" name="ジャンル" value="食品・アルコール系">食品・アルコール系</label>
+          <label><input type="radio" name="ジャンル" value="ソーシャルグッド系（災害復興含む）">ソーシャルグッド系（災害復興含む）</label>
+          <label><input type="radio" name="ジャンル" value="プロダクト系">プロダクト系</label>
+          <label><input type="radio" name="ジャンル" value="その他">その他</label>
+        </div>
+
+        <label class="q">プロジェクトの概要</label>
+        <p class="hint">例：沼津で古民家カフェを開きたい。地元食材を使い、地域の交流拠点にしたい。改装費に◯万円が必要…／わかる範囲でOK</p>
+        <textarea name="プロジェクトの概要"></textarea>
+
+        <label class="q">集めたい金額の目安</label>
+        <p class="hint">例：80万円／未定でもOK</p>
+        <input type="text" name="集めたい金額の目安">
+
+        <label class="q">いつ頃の実施を検討していますか？</label>
+        <p class="hint">例：秋ごろ／未定でもOK</p>
+        <input type="text" name="いつ頃の実施を検討していますか？">
+
+        <label class="q">クラファンに挑戦した経験はありますか？</label>
+        <div class="opts">
+          <label><input type="radio" name="クラファンの経験" value="はじめて">はじめて</label>
+          <label><input type="radio" name="クラファンの経験" value="経験あり">経験あり</label>
+        </div>
+      </div>
+
+      <div class="card">
+        <p class="sec">③ 相談したいこと</p>
+        <label class="q">相談内容に近いもの<span class="req">必須・複数可</span></label>
+        <div class="opts" id="soudan">
+          <label><input type="checkbox" name="相談内容" value="基本から教えてほしい">基本から教えてほしい</label>
+          <label><input type="checkbox" name="相談内容" value="自分の企画が向いているか判断してほしい">自分の企画が向いているか判断してほしい</label>
+          <label><input type="checkbox" name="相談内容" value="進め方がわからない">進め方がわからない</label>
+          <label><input type="checkbox" name="相談内容" value="ページ作成のアドバイスがほしい">ページ作成のアドバイスがほしい</label>
+          <label><input type="checkbox" name="相談内容" value="ページ制作を手伝ってほしい">ページ制作を手伝ってほしい</label>
+          <label><input type="checkbox" name="相談内容" value="とりあえず話を聞いてほしい">とりあえず話を聞いてほしい</label>
+        </div>
+
+        <label class="q">クラファンで実現したいこと</label>
+        <div class="opts">
+          <label><input type="radio" name="実現したいこと" value="資金を集めたい">資金を集めたい</label>
+          <label><input type="radio" name="実現したいこと" value="商品やお店を広めたい">商品やお店を広めたい</label>
+          <label><input type="radio" name="実現したいこと" value="仲間・ファンを集めたい">仲間・ファンを集めたい</label>
+          <label><input type="radio" name="実現したいこと" value="まだ整理できていない（相談したい）">まだ整理できていない（相談したい）</label>
+        </div>
+
+        <label class="q">事前に共有できる資料（あれば）</label>
+        <p class="hint">参考ページのURLなど。写真や企画メモは、このあとLINEのトークにそのまま送っていただけます。</p>
+        <textarea name="事前に共有できる資料"></textarea>
+
+        <label class="q">当サービスをどのように知りましたか？</label>
+        <div class="opts">
+          <label><input type="radio" name="知ったきっかけ" value="検索">検索</label>
+          <label><input type="radio" name="知ったきっかけ" value="SNSで発見">SNSで発見</label>
+          <label><input type="radio" name="知ったきっかけ" value="沼津経済新聞・記事">沼津経済新聞・記事</label>
+          <label><input type="radio" name="知ったきっかけ" value="知人の紹介">知人の紹介</label>
+          <label><input type="radio" name="知ったきっかけ" value="講演・イベントで">講演・イベントで</label>
+          <label><input type="radio" name="知ったきっかけ" value="CAMPFIRE経由">CAMPFIRE経由</label>
+          <label><input type="radio" name="知ったきっかけ" value="その他">その他</label>
+        </div>
+      </div>
+
+      <div class="card">
+        <p class="sec">④ 個人情報の取り扱いについて</p>
+        <div class="privacy">
+          <p>ご回答は、サポート提供のために担当とシステム保守者が利用し、Googleのサービス（スプレッドシート・ドライブ）に保存されます。ご相談内容の整理にAIツール（NotebookLM等）を使う場合があります。保存内容の確認・削除は、いつでもお申し出いただけます。</p>
+        </div>
+
+        <label class="q">ご相談内容の整理にAIツールを利用してもよいですか？<span class="req">必須</span></label>
+        <p class="hint">「いいえ」でもサポート内容は変わりません（資料の整理を手動で行います）。</p>
+        <div class="opts">
+          <label><input type="radio" name="AIツールの利用" value="はい" required>はい</label>
+          <label><input type="radio" name="AIツールの利用" value="いいえ（AIを使わずに対応してほしい）">いいえ（AIを使わずに対応してほしい）</label>
+        </div>
+
+        <label class="q">打ち合わせの録音に同意いただけますか？<span class="req">必須</span></label>
+        <p class="hint">記録・整理の目的で使用します。</p>
+        <div class="opts">
+          <label><input type="radio" name="録音の同意" value="はい" required>はい</label>
+          <label><input type="radio" name="録音の同意" value="いいえ">いいえ</label>
+          <label><input type="radio" name="録音の同意" value="当日に判断したい">当日に判断したい</label>
+        </div>
+      </div>
+
+      <button type="submit" id="btn">この内容で申し込む</button>
+      <div class="err" id="err"></div>
+    </form>
+  </main>
+</div>
+
+<div id="done" class="done" style="display:none">
+  <div class="mark">✅</div>
+  <h2>お申し込みを受け付けました</h2>
+  <p>本人確認も完了しました。<br>担当より、翌営業日までにこのLINEでご連絡します。</p>
+  <p style="font-size:13px;color:#888;margin-top:24px">この画面は閉じていただいて大丈夫です。</p>
+</div>
+
+<script>
+// GASのWebアプリURL（申込データの送信先）
+const GAS_URL = 'https://script.google.com/macros/s/AKfycbzCyZfImeMOW4KluDYDYXtG9dmZPsrrsKw00tmSA9uOQHBwclnQcrdUZhqc6MmylKDt/exec';
+// LINE DevelopersのLIFFタブで発行したLIFF ID
+const LIFF_ID = 'PASTE_LIFF_ID_HERE';
+
+let idToken = null;
+
+async function boot() {
+  try {
+    await liff.init({ liffId: LIFF_ID });
+    if (!liff.isLoggedIn()) { liff.login(); return; }
+    const p = await liff.getProfile();
+    idToken = liff.getIDToken();
+    document.getElementById('uname').textContent = p.displayName + ' さん';
+    document.getElementById('loading').style.display = 'none';
+    document.getElementById('app').style.display = 'block';
+  } catch (e) {
+    document.getElementById('loading').innerHTML =
+      'LINEアプリの中で開いてください🙏<br><span style="font-size:13px">（このページはLINEのメニューから開く必要があります）</span>';
+  }
+}
+
+document.getElementById('f').addEventListener('submit', async function (ev) {
+  ev.preventDefault();
+  const checked = document.querySelectorAll('#soudan input:checked');
+  if (!checked.length) {
+    document.getElementById('err').textContent = '「相談内容に近いもの」を1つ以上選んでください';
+    return;
+  }
+  const btn = document.getElementById('btn');
+  btn.disabled = true; btn.textContent = '送信しています…';
+
+  const fd = new FormData(document.getElementById('f'));
+  const answers = {};
+  for (const [k, v] of fd.entries()) {
+    answers[k] = answers[k] ? answers[k] + '、' + v : v; // 複数選択は「、」でつなぐ
+  }
+
+  try {
+    await fetch(GAS_URL + '?liff=1', {
+      method: 'POST',
+      mode: 'no-cors', // GASはCORSヘッダーを返せないため、送信のみ（結果はLINEのトークで届く）
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify({ idToken: idToken, answers: answers })
+    });
+    document.getElementById('app').style.display = 'none';
+    document.getElementById('done').style.display = 'block';
+    setTimeout(function () { if (liff.isInClient()) liff.closeWindow(); }, 2600);
+  } catch (e) {
+    btn.disabled = false; btn.textContent = 'この内容で申し込む';
+    document.getElementById('err').textContent = '送信できませんでした。電波の良い場所でもう一度お試しください。';
+  }
+});
+
+boot();
+</script>
+</body>
+</html>
